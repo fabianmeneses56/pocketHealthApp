@@ -1,27 +1,33 @@
 import React, { FC, Dispatch, SetStateAction } from 'react'
-import { GetServerSideProps, NextPage } from 'next'
-import { useForm, Controller } from 'react-hook-form'
+
+import { useForm } from 'react-hook-form'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+
 import {
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  DialogContentText,
   TextField,
   Button,
   Select,
   MenuItem,
-  OutlinedInput,
   FormControl,
   InputLabel
 } from '@mui/material'
-import { dbCategories } from '@/database'
+
 import { ICategory, ISubcategory } from '@/interfaces/categories'
+import { createBill } from '../configs/dialogComponentConfig'
 
 interface FormData {
   category: string
   subCategory: string
   subCategoriesList: ISubcategory[] | undefined
+  date: Date | null
+  detail: string
+  amount: string
 }
 
 interface props {
@@ -42,14 +48,17 @@ const DialogComponent: FC<props> = ({
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
     getValues,
     setValue
   } = useForm<FormData>()
 
-  const handleSave = (data: FormData) => {
-    console.log(data)
+  const handleSave = async (data: FormData) => {
+    const { hasError, message } = await createBill(data)
+
+    if (!hasError) {
+      setShowDialog(false)
+    }
   }
 
   return (
@@ -58,15 +67,6 @@ const DialogComponent: FC<props> = ({
         <form onSubmit={handleSubmit(handleSave)} noValidate>
           <DialogTitle>Añadir Gasto</DialogTitle>
           <DialogContent>
-            {/* <TextField
-              autoFocus
-              margin='dense'
-              id='name'
-              label='Email Address'
-              type='email'
-              fullWidth
-              variant='standard'
-            /> */}
             <FormControl style={{ width: '100%' }}>
               <InputLabel id='demo-dialog-select-label'>Categoria</InputLabel>
 
@@ -116,23 +116,24 @@ const DialogComponent: FC<props> = ({
               </Select>
             </FormControl>
 
-            <TextField
-              label='fecha'
-              type='password'
-              variant='filled'
-              fullWidth
-              // {...register('password', {
-              //   required: 'Este campo es requerido',
-              //   minLength: { value: 6, message: 'Mínimo 6 caracteres' }
-              // })}
-              // error={!!errors.password}
-              // helperText={errors.password?.message}
-            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label='Basic example'
+                value={getValues('date')}
+                onChange={newValue => {
+                  setValue('date', newValue, {
+                    shouldValidate: true
+                  })
+                  // console.log(newValue)
+                }}
+                renderInput={params => <TextField {...params} />}
+              />
+            </LocalizationProvider>
             <TextField
               label='Detalle'
-              type='password'
               variant='filled'
               fullWidth
+              {...register('detail')}
               // {...register('password', {
               //   required: 'Este campo es requerido',
               //   minLength: { value: 6, message: 'Mínimo 6 caracteres' }
@@ -142,9 +143,9 @@ const DialogComponent: FC<props> = ({
             />
             <TextField
               label='Importe'
-              type='password'
               variant='filled'
               fullWidth
+              {...register('amount')}
               // {...register('password', {
               //   required: 'Este campo es requerido',
               //   minLength: { value: 6, message: 'Mínimo 6 caracteres' }
@@ -162,8 +163,5 @@ const DialogComponent: FC<props> = ({
     </div>
   )
 }
-
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
 
 export default DialogComponent

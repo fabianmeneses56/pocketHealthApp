@@ -1,56 +1,18 @@
-import { useState, Dispatch, SetStateAction } from 'react'
 import Head from 'next/head'
-import { GetServerSideProps, NextPage } from 'next'
-import { Inter } from '@next/font/google'
-import Button from '@mui/material/Button'
+import { NextPage } from 'next'
+import NextLink from 'next/link'
 import {
-  DataGrid,
-  GridRowsProp,
-  GridColDef,
-  GridToolbarContainer,
-  GridToolbarColumnsButton
-} from '@mui/x-data-grid'
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+  Link,
+  CardActionArea
+} from '@mui/material'
 
-import DialogComponent from '@/components/ui/DialogComponent'
-import { dbCategories } from '@/database'
-import { ICategory } from '@/interfaces/categories'
+import { monthNames } from '@/utils/months'
 
-const inter = Inter({ subsets: ['latin'] })
-
-const rows: GridRowsProp = [
-  { id: 1, col1: 'Hello', col2: 'World' },
-  { id: 2, col1: 'DataGridPro', col2: 'is Awesome' },
-  { id: 3, col1: 'MUI', col2: 'is Amazing' }
-]
-
-const columns: GridColDef[] = [
-  { field: 'col1', headerName: 'CATEGORÍA', width: 250 },
-  { field: 'col2', headerName: 'SUBCATEGORÍA', width: 250 },
-  { field: 'col3', headerName: 'FECHA', width: 250 },
-  { field: 'col4', headerName: 'DETALLE', width: 250 },
-  { field: 'col5', headerName: 'IMPORTE', width: 250 }
-]
-interface props {
-  categories: ICategory[]
-}
-function CustomToolbar(setShowDialog: Dispatch<SetStateAction<boolean>>) {
-  return (
-    <GridToolbarContainer>
-      <Button
-        variant='contained'
-        color='secondary'
-        onClick={() => {
-          setShowDialog(true)
-        }}
-      >
-        añadir Gasto
-      </Button>
-    </GridToolbarContainer>
-  )
-}
-const Home: NextPage<props> = ({ categories }) => {
-  const [showDialog, setShowDialog] = useState(false)
-  // console.log(categories)
+const Home: NextPage = () => {
   return (
     <>
       <Head>
@@ -60,43 +22,42 @@ const Home: NextPage<props> = ({ categories }) => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <main style={{ padding: 25 }}>
-        <div style={{ height: 300, width: '100%', backgroundColor: '#b1b1b1' }}>
-          <DialogComponent
-            showDialog={showDialog}
-            setShowDialog={setShowDialog}
-            categories={categories}
-          />
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            components={{
-              Toolbar: () => CustomToolbar(setShowDialog)
-            }}
-          />
-        </div>
+        <Grid container spacing={2}>
+          {monthNames.map((month, index) => (
+            <Grid key={index} item>
+              <NextLink legacyBehavior href={`/months/${month}`}>
+                <Link>
+                  <Card
+                    sx={{
+                      width: 275,
+                      backgroundColor: '#9DA2AE'
+                    }}
+                  >
+                    <CardActionArea
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <CardContent>
+                        <Typography
+                          sx={{ fontSize: 25, textDecoration: 'none' }}
+                          color='black'
+                        >
+                          {month}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                </Link>
+              </NextLink>
+            </Grid>
+          ))}
+        </Grid>
       </main>
     </>
   )
 }
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  // const session: any = await getSession({ req })
 
-  // if (!session) {
-  //   return {
-  //     redirect: {
-  //       destination: '/auth/login?p=/orders/history',
-  //       permanent: false
-  //     }
-  //   }
-  // }
-
-  const categories = await dbCategories.getAllCategories()
-  // const orders = await dbCategories.getOrdersByUser(session.user._id)
-
-  return {
-    props: {
-      categories
-    }
-  }
-}
 export default Home
