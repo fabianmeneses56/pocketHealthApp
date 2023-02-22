@@ -21,6 +21,7 @@ export default function handler(
 
 const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const body = req.body as IBill
+  await db.connect()
 
   try {
     const newBill = new Bill({
