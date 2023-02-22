@@ -46,6 +46,7 @@ const MonthView: NextPage<Props> = ({ bill, categories }) => {
 
   return (
     <div style={{ height: 650, width: '100%', backgroundColor: '#b1b1b1' }}>
+      <h1>test</h1>
       <DialogComponent
         showDialog={showDialog}
         setShowDialog={setShowDialog}
