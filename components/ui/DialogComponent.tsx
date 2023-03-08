@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { NumericFormat } from 'react-number-format'
 
 import {
   Dialog,
@@ -34,12 +35,14 @@ interface props {
   showDialog: boolean
   setShowDialog: Dispatch<SetStateAction<boolean>>
   categories: ICategory[]
+  reloadFunction: () => Promise<void>
 }
 
 const DialogComponent: FC<props> = ({
   showDialog,
   setShowDialog,
-  categories
+  categories,
+  reloadFunction
 }) => {
   const handleClose = () => {
     setShowDialog(!showDialog)
@@ -58,6 +61,7 @@ const DialogComponent: FC<props> = ({
 
     if (!hasError) {
       setShowDialog(false)
+      reloadFunction()
     }
   }
 
@@ -67,10 +71,17 @@ const DialogComponent: FC<props> = ({
         <form onSubmit={handleSubmit(handleSave)} noValidate>
           <DialogTitle>Añadir Gasto</DialogTitle>
           <DialogContent>
-            <FormControl style={{ width: '100%' }}>
-              <InputLabel id='demo-dialog-select-label'>Categoria</InputLabel>
+            <FormControl
+              variant='standard'
+              style={{ width: '100%', margin: '10px 0' }}
+            >
+              <InputLabel id='demo-simple-select-standard-label'>
+                Categoria
+              </InputLabel>
 
               <Select
+                labelId='demo-simple-select-standard-label'
+                id='demo-simple-select-standard'
                 value={getValues('category')}
                 onChange={({ target }) => {
                   setValue('category', target.value, {
@@ -93,7 +104,10 @@ const DialogComponent: FC<props> = ({
                 })}
               </Select>
             </FormControl>
-            <FormControl style={{ width: '100%' }}>
+            <FormControl
+              variant='standard'
+              style={{ width: '100%', margin: '10px 0' }}
+            >
               <InputLabel id='demo-dialog-select-label'>
                 SubCategoria
               </InputLabel>
@@ -118,45 +132,50 @@ const DialogComponent: FC<props> = ({
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                label='Basic example'
+                label='Select Date'
                 value={getValues('date')}
                 onChange={newValue => {
                   setValue('date', newValue, {
                     shouldValidate: true
                   })
-                  // console.log(newValue)
                 }}
-                renderInput={params => <TextField {...params} />}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    style={{ width: '100%' }}
+                    variant='standard'
+                  />
+                )}
               />
             </LocalizationProvider>
             <TextField
               label='Detalle'
-              variant='filled'
+              variant='standard'
               fullWidth
+              style={{ margin: '10px 0' }}
               {...register('detail')}
-              // {...register('password', {
-              //   required: 'Este campo es requerido',
-              //   minLength: { value: 6, message: 'Mínimo 6 caracteres' }
-              // })}
-              // error={!!errors.password}
-              // helperText={errors.password?.message}
             />
-            <TextField
-              label='Importe'
-              variant='filled'
-              fullWidth
-              {...register('amount')}
-              // {...register('password', {
-              //   required: 'Este campo es requerido',
-              //   minLength: { value: 6, message: 'Mínimo 6 caracteres' }
-              // })}
-              // error={!!errors.password}
-              // helperText={errors.password?.message}
+
+            <NumericFormat
+              customInput={TextField}
+              variant='standard'
+              thousandSeparator={true}
+              value={getValues('amount')}
+              decimalScale={2}
+              onValueChange={vals => {
+                setValue('amount', vals.formattedValue, {
+                  shouldValidate: true
+                })
+              }}
+              style={{ width: '100%' }}
+              InputProps={{
+                startAdornment: <span>$</span>
+              }}
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button type='submit'>Subscribe</Button>
+            <Button type='submit'>Send</Button>
           </DialogActions>
         </form>
       </Dialog>

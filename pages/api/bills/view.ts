@@ -4,7 +4,7 @@ import { db } from '@/database'
 import { IBill } from '@/interfaces/bill'
 import { Bill } from '@/models'
 
-type Data = { message: string } | IBill
+type Data = { message: string } | IBill[]
 
 export default function handler(
   req: NextApiRequest,
@@ -12,26 +12,25 @@ export default function handler(
 ) {
   switch (req.method) {
     case 'POST':
-      return createOrder(req, res)
+      return getBillsByMonth(req, res)
 
     default:
       return res.status(400).json({ message: 'Bad request' })
   }
 }
 
-const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const body = req.body as IBill
+const getBillsByMonth = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  const { month } = req.body
   await db.connect()
 
   try {
-    const newBill = new Bill({
-      ...req.body
-    })
+    const bills = await Bill.find({ month }).lean()
 
-    await newBill.save()
     await db.disconnect()
-
-    return res.status(201).json(newBill)
+    return res.status(201).json(bills)
   } catch (error: any) {
     await db.disconnect()
 
@@ -39,6 +38,4 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       message: error.message || 'Revise logs del servidor'
     })
   }
-
-  //   return res.status(201).json(req.body)
 }
