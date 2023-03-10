@@ -1,6 +1,12 @@
 import React, { Dispatch, useState, SetStateAction, useEffect } from 'react'
 import { GetServerSideProps, NextPage } from 'next'
-import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid'
+import {
+  DataGrid,
+  GridColDef,
+  GridToolbarContainer,
+  GridRenderCellParams,
+  GridRowId
+} from '@mui/x-data-grid'
 
 import axios from 'axios'
 import { styled } from '@mui/material/styles'
@@ -11,7 +17,8 @@ import {
   Typography,
   Link,
   Button,
-  CardActionArea
+  CardActionArea,
+  CardActions
 } from '@mui/material'
 
 import { dbBills, dbCategories } from '@/database'
@@ -25,12 +32,31 @@ interface Props {
   categories: ICategory[]
 }
 
+function renderRating(params: GridRenderCellParams<any>) {
+  const handleDelete = async () => {
+    const test = await pocketApi.delete<IBill>('/bills', {
+      data: { id: params.id }
+    })
+  }
+
+  return (
+    <Button variant='contained' color='error' onClick={handleDelete}>
+      Delete
+    </Button>
+  )
+}
 const columns: GridColDef[] = [
   { field: 'category', headerName: 'CATEGORÍA', width: 250 },
   { field: 'subCategory', headerName: 'SUBCATEGORÍA', width: 250 },
   { field: 'date', headerName: 'FECHA', width: 250 },
   { field: 'detail', headerName: 'DETALLE', width: 250 },
-  { field: 'amount', headerName: 'IMPORTE', width: 250 }
+  { field: 'amount', headerName: 'IMPORTE', width: 250 },
+  {
+    field: '',
+    headerName: '',
+    width: 250,
+    renderCell: renderRating
+  }
 ]
 
 function CustomToolbar(setShowDialog: Dispatch<SetStateAction<boolean>>) {
@@ -53,7 +79,6 @@ export interface reqa {
   month: string
 }
 const Root = styled('div')(({ theme }) => ({
-  // padding: theme.spacing(1),
   height: 600,
   [theme.breakpoints.down('sm')]: {
     display: 'none'
@@ -113,7 +138,11 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
     ...res
   }))
 
-  console.log(rows)
+  const handleDeleteCard = async (id: string | undefined) => {
+    const test = await pocketApi.delete<IBill>('/bills', {
+      data: { id: id }
+    })
+  }
   return (
     <div style={{ width: '100%', backgroundColor: '#b1b1b1' }}>
       <DialogComponent
@@ -176,6 +205,16 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
                 IMPORTE:{res.amount}
               </Typography>
             </CardContent>
+            <CardActions>
+              <Button
+                size='small'
+                variant='contained'
+                color='error'
+                onClick={() => handleDeleteCard(res._id)}
+              >
+                Delete
+              </Button>
+            </CardActions>
           </Card>
         ))}
       </DivButton>
