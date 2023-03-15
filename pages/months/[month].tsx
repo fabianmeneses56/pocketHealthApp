@@ -7,6 +7,7 @@ import {
   GridRenderCellParams,
   GridRowId
 } from '@mui/x-data-grid'
+import dayjs from 'dayjs'
 
 import axios from 'axios'
 import { styled } from '@mui/material/styles'
@@ -40,15 +41,29 @@ function renderRating(params: GridRenderCellParams<any>) {
   }
 
   return (
-    <Button variant='contained' color='error' onClick={handleDelete}>
+    <Button
+      variant='contained'
+      style={{
+        backgroundColor: '#3F4E4F'
+      }}
+      onClick={handleDelete}
+    >
       Delete
     </Button>
   )
 }
+
 const columns: GridColDef[] = [
   { field: 'category', headerName: 'CATEGORÍA', width: 250 },
   { field: 'subCategory', headerName: 'SUBCATEGORÍA', width: 250 },
-  { field: 'date', headerName: 'FECHA', width: 250 },
+  {
+    field: 'date',
+    headerName: 'FECHA',
+    width: 250,
+    renderCell: ({ value }) => {
+      return <span>{dayjs(value).format('D/MMM/YY')}</span>
+    }
+  },
   { field: 'detail', headerName: 'DETALLE', width: 250 },
   { field: 'amount', headerName: 'IMPORTE', width: 250 },
   {
@@ -64,6 +79,9 @@ function CustomToolbar(setShowDialog: Dispatch<SetStateAction<boolean>>) {
     <GridToolbarContainer>
       <Button
         variant='contained'
+        style={{
+          backgroundColor: '#A27B5C'
+        }}
         color='secondary'
         onClick={() => {
           setShowDialog(true)
@@ -77,6 +95,10 @@ function CustomToolbar(setShowDialog: Dispatch<SetStateAction<boolean>>) {
 
 export interface reqa {
   month: string
+}
+interface DataMonthState {
+  summaryMonth: number
+  bills: IBill[]
 }
 const Root = styled('div')(({ theme }) => ({
   height: 600,
@@ -96,9 +118,21 @@ const DivButton = styled('div')(({ theme }) => ({
     alignItems: 'center'
   }
 }))
+
+const DivContainer = styled('div')(({ theme }) => ({
+  width: '100%',
+  backgroundColor: '#2c3639',
+  marginTop: 15,
+  [theme.breakpoints.up('sm')]: {
+    backgroundColor: '#DCD7C9'
+  }
+}))
 const MonthView: NextPage<Props> = ({ month, categories }) => {
   const [showDialog, setShowDialog] = useState(false)
-  const [dataMonth, setDataMonth] = useState<IBill[]>([])
+  const [dataMonth, setDataMonth] = useState<DataMonthState>({
+    summaryMonth: 0,
+    bills: []
+  })
 
   const body: reqa = {
     month: month
@@ -127,34 +161,40 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
 
   const test = async () => {
     const { message } = await request()
+
     setDataMonth(message)
   }
+
   useEffect(() => {
     test()
   }, [])
 
-  const rows = dataMonth?.map(res => ({
+  const rows = dataMonth.bills?.map(res => ({
     id: res._id,
     ...res
   }))
 
+  // console.log(rows)
   const handleDeleteCard = async (id: string | undefined) => {
     const test = await pocketApi.delete<IBill>('/bills', {
       data: { id: id }
     })
   }
   return (
-    <div style={{ width: '100%', backgroundColor: '#b1b1b1' }}>
+    <DivContainer>
       <DialogComponent
         showDialog={showDialog}
         setShowDialog={setShowDialog}
         categories={categories}
         reloadFunction={test}
       />
+      <h1>{dataMonth?.summaryMonth}</h1>
       <DivButton>
         <Button
           variant='contained'
-          color='secondary'
+          style={{
+            backgroundColor: '#A27B5C'
+          }}
           onClick={() => {
             setShowDialog(true)
           }}
@@ -162,12 +202,12 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
           añadir Gasto
         </Button>
 
-        {rows.map(res => (
+        {rows?.map(res => (
           <Card
             key={res.id}
             sx={{
               width: 350,
-              backgroundColor: '#9DA2AE',
+              backgroundColor: '#DCD7C9',
               margin: '7px 0'
             }}
           >
@@ -176,40 +216,42 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
                 sx={{ fontSize: 15, textDecoration: 'none' }}
                 color='black'
               >
-                CATEGORÍA:{res.category}
+                CATEGORÍA: {res.category}
               </Typography>
               <Typography
                 sx={{ fontSize: 15, textDecoration: 'none' }}
                 color='black'
               >
-                SUBCATEGORÍA:{res.subCategory}
-              </Typography>
-
-              <Typography
-                sx={{ fontSize: 15, textDecoration: 'none' }}
-                color='black'
-              >
-                FECHA:{String(res.date)}
+                SUBCATEGORÍA: {res.subCategory}
               </Typography>
 
               <Typography
                 sx={{ fontSize: 15, textDecoration: 'none' }}
                 color='black'
               >
-                DETALLE:{res.detail}
+                FECHA: {dayjs(res.date).format('D/MMM/YY')}
+              </Typography>
+
+              <Typography
+                sx={{ fontSize: 15, textDecoration: 'none' }}
+                color='black'
+              >
+                DETALLE: {res.detail}
               </Typography>
               <Typography
                 sx={{ fontSize: 15, textDecoration: 'none' }}
                 color='black'
               >
-                IMPORTE:{res.amount}
+                IMPORTE: {res.amount}
               </Typography>
             </CardContent>
             <CardActions>
               <Button
                 size='small'
                 variant='contained'
-                color='error'
+                style={{
+                  backgroundColor: '#3F4E4F'
+                }}
                 onClick={() => handleDeleteCard(res._id)}
               >
                 Delete
@@ -218,16 +260,17 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
           </Card>
         ))}
       </DivButton>
+
       <Root>
         <DataGrid
-          rows={rows}
+          rows={rows ?? []}
           columns={columns}
           components={{
             Toolbar: () => CustomToolbar(setShowDialog)
           }}
         />
       </Root>
-    </div>
+    </DivContainer>
   )
 }
 

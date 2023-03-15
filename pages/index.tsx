@@ -24,13 +24,12 @@ const Home: NextPage = () => {
       <main style={{ padding: 25 }}>
         <Grid container spacing={2}>
           {monthNames.map((month, index) => (
-            <Grid key={index} item>
+            <Grid key={index} item xs={12} sm={12} lg={3}>
               <NextLink legacyBehavior href={`/months/${month}`}>
-                <Link>
+                <Link style={{ textDecoration: 'none' }}>
                   <Card
                     sx={{
-                      width: 275,
-                      backgroundColor: '#9DA2AE'
+                      backgroundColor: '#DCD7C9'
                     }}
                   >
                     <CardActionArea

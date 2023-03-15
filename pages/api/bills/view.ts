@@ -4,7 +4,9 @@ import { db } from '@/database'
 import { IBill } from '@/interfaces/bill'
 import { Bill } from '@/models'
 
-type Data = { message: string } | IBill[]
+type Data =
+  | { message?: string; summaryMonth?: number; bills?: IBill[] }
+  | IBill[]
 
 export default function handler(
   req: NextApiRequest,
@@ -29,8 +31,20 @@ const getBillsByMonth = async (
   try {
     const bills = await Bill.find({ month }).lean()
 
+    const currencyFormat = bills.map(res => {
+      if (res.amount.includes(',')) {
+        return Number(res.amount.replace(',', ''))
+      } else {
+        return Number(res.amount)
+      }
+    })
+    const summaryMonth = currencyFormat.reduce(
+      (prev, current) => prev + current,
+      0
+    )
+
     await db.disconnect()
-    return res.status(201).json(bills)
+    return res.status(201).json({ bills, summaryMonth })
   } catch (error: any) {
     await db.disconnect()
 
