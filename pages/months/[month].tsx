@@ -188,7 +188,10 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
         categories={categories}
         reloadFunction={test}
       />
-      <h1>{dataMonth?.summaryMonth}</h1>
+      <Typography sx={{ fontSize: 17 }} color='#d23838'>
+        TOTAL EXPENSES = ${dataMonth?.summaryMonth.toLocaleString()}
+      </Typography>
+
       <DivButton>
         <Button
           variant='contained'
