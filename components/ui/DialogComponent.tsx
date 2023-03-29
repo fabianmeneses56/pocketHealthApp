@@ -53,7 +53,8 @@ const DialogComponent: FC<props> = ({
     handleSubmit,
     formState: { errors },
     getValues,
-    setValue
+    setValue,
+    reset
   } = useForm<FormData>()
 
   const handleSave = async (data: FormData) => {
@@ -62,6 +63,7 @@ const DialogComponent: FC<props> = ({
     if (!hasError) {
       setShowDialog(false)
       reloadFunction()
+      reset()
     }
   }
 

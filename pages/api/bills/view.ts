@@ -29,7 +29,7 @@ const getBillsByMonth = async (
   await db.connect()
 
   try {
-    const bills = await Bill.find({ month }).lean()
+    const bills = await Bill.find({ month }).sort({ date: -1 }).lean()
 
     const currencyFormat = bills.map(res => {
       if (res.amount.includes(',')) {
