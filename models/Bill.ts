@@ -6,7 +6,7 @@ const billSchema = new Schema({
   category: { type: String, required: true },
   subCategory: { type: String, required: true },
   date: { type: Date, required: true },
-  detail: { type: String, required: true },
+  detail: { type: String, required: false },
   amount: { type: String, required: true },
   month: { type: String, required: true }
 })

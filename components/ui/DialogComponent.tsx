@@ -1,4 +1,5 @@
 import React, { FC, Dispatch, SetStateAction } from 'react'
+import { toast } from 'sonner'
 
 import { useForm } from 'react-hook-form'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -64,6 +65,7 @@ const DialogComponent: FC<props> = ({
       setShowDialog(false)
       reloadFunction()
       reset()
+      toast.success('Gasto añadido correctamente')
     }
   }
 
