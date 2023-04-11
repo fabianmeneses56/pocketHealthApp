@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import dayjs from 'dayjs'
 
-import { handleDeleteCard } from '@/pages/months/monthConfig'
+import { handleDeleteCard } from '@/utils/monthConfig'
 import { IBill } from '@/interfaces/bill'
 
 interface cardProps {

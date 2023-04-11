@@ -7,8 +7,8 @@ import { Typography, Button } from '@mui/material'
 import { dbCategories } from '@/database'
 import DialogComponent from '@/components/ui/DialogComponent'
 import { ICategory } from '@/interfaces/categories'
-import { DivButton, DivContainer, Root } from './monthStyles'
-import { columns, CustomToolbar, useHandleData } from './monthConfig'
+import { DivButton, DivContainer, Root } from '../../utils/monthStyles'
+import { columns, CustomToolbar, useHandleData } from '../../utils/monthConfig'
 import BillCard from '@/components/ui/BillCard'
 
 interface Props {
