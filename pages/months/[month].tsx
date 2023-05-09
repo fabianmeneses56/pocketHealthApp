@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { GetServerSideProps, NextPage } from 'next'
 import { Toaster } from 'sonner'
 import { DataGrid } from '@mui/x-data-grid'
@@ -10,6 +10,7 @@ import { ICategory } from '@/interfaces/categories'
 import { DivButton, DivContainer, Root } from '../../utils/monthStyles'
 import { columns, CustomToolbar, useHandleData } from '../../utils/monthConfig'
 import BillCard from '@/components/ui/BillCard'
+import { pocketApi } from '@/api'
 
 interface Props {
   month: string
