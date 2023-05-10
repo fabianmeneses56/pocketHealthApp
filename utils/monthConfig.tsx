@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 
 import { pocketApi } from '@/api'
 import { IBill } from '@/interfaces/bill'
+import { TopLevel } from '@/pages'
 
 interface DataMonthState {
   summaryMonth: number
@@ -109,6 +110,10 @@ export const useHandleData = (month: string) => {
     summaryMonth: 0,
     bills: []
   })
+  const [getReportState, setGetReportState] = useState<TopLevel>({
+    amounts: [],
+    categories: []
+  })
   const body: reqa = {
     month: month
   }
@@ -141,9 +146,15 @@ export const useHandleData = (month: string) => {
     setDataMonth(message)
   }
 
+  const getReport = async () => {
+    const { data } = await pocketApi.post('/bills/report', body)
+    setGetReportState(data)
+  }
+
   useEffect(() => {
     getData()
+    getReport()
   }, [])
 
-  return { dataMonth, getData }
+  return { dataMonth, getData, getReportState }
 }

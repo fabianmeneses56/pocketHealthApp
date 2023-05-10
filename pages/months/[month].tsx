@@ -10,7 +10,7 @@ import { ICategory } from '@/interfaces/categories'
 import { DivButton, DivContainer, Root } from '../../utils/monthStyles'
 import { columns, CustomToolbar, useHandleData } from '../../utils/monthConfig'
 import BillCard from '@/components/ui/BillCard'
-import { pocketApi } from '@/api'
+import Report from '@/components/ui/report'
 
 interface Props {
   month: string
@@ -24,7 +24,7 @@ export interface reqa {
 const MonthView: NextPage<Props> = ({ month, categories }) => {
   const [showDialog, setShowDialog] = useState(false)
 
-  const { dataMonth, getData } = useHandleData(month)
+  const { dataMonth, getData, getReportState } = useHandleData(month)
 
   const rows = dataMonth.bills?.map(res => ({
     id: res._id,
@@ -32,47 +32,50 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
   }))
 
   return (
-    <DivContainer>
-      <Toaster position='top-center' richColors />
+    <div>
+      <DivContainer>
+        <Toaster position='top-center' richColors />
 
-      <DialogComponent
-        showDialog={showDialog}
-        setShowDialog={setShowDialog}
-        categories={categories}
-        reloadFunction={getData}
-      />
-      <Typography sx={{ fontSize: 17 }} color='#d23838'>
-        TOTAL EXPENSES = ${dataMonth?.summaryMonth?.toLocaleString()}
-      </Typography>
-
-      <DivButton>
-        <Button
-          variant='contained'
-          style={{
-            backgroundColor: '#A27B5C'
-          }}
-          onClick={() => {
-            setShowDialog(true)
-          }}
-        >
-          añadir Gasto
-        </Button>
-
-        {rows?.map(res => (
-          <BillCard key={res.id} res={res} getData={getData} />
-        ))}
-      </DivButton>
-
-      <Root>
-        <DataGrid
-          rows={rows ?? []}
-          columns={columns(getData)}
-          components={{
-            Toolbar: () => CustomToolbar(setShowDialog)
-          }}
+        <DialogComponent
+          showDialog={showDialog}
+          setShowDialog={setShowDialog}
+          categories={categories}
+          reloadFunction={getData}
         />
-      </Root>
-    </DivContainer>
+        <Typography sx={{ fontSize: 17 }} color='#d23838'>
+          TOTAL EXPENSES = ${dataMonth?.summaryMonth?.toLocaleString()}
+        </Typography>
+
+        <DivButton>
+          <Button
+            variant='contained'
+            style={{
+              backgroundColor: '#A27B5C'
+            }}
+            onClick={() => {
+              setShowDialog(true)
+            }}
+          >
+            añadir Gasto
+          </Button>
+
+          {rows?.map(res => (
+            <BillCard key={res.id} res={res} getData={getData} />
+          ))}
+        </DivButton>
+
+        <Root>
+          <DataGrid
+            rows={rows ?? []}
+            columns={columns(getData)}
+            components={{
+              Toolbar: () => CustomToolbar(setShowDialog)
+            }}
+          />
+        </Root>
+      </DivContainer>
+      <Report dataPie={getReportState} />
+    </div>
   )
 }
 
