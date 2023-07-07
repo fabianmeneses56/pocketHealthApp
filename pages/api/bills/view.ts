@@ -33,7 +33,7 @@ const getBillsByMonth = async (
 
     const currencyFormat = bills.map(res => {
       if (res.amount.includes(',')) {
-        return Number(res.amount.replace(',', ''))
+        return Number(res.amount.replace(/,/g, ''))
       } else {
         return Number(res.amount)
       }

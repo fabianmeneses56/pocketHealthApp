@@ -1,10 +1,10 @@
 import React from 'react'
-import { Typography, CardActionArea } from '@mui/material'
+import { Typography } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { Pie } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 
-import { TopLevel } from '@/pages'
+import { IPieReport } from '@/interfaces/report'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -15,7 +15,7 @@ export const DivCharts = styled('div')(({ theme }) => ({
   }
 }))
 
-const Report = ({ dataPie }: { dataPie: TopLevel }) => {
+const Report = ({ dataPie }: { dataPie: IPieReport }) => {
   const data = {
     labels: dataPie.categories,
     datasets: [

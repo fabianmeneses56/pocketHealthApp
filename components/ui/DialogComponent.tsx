@@ -1,4 +1,4 @@
-import React, { FC, Dispatch, SetStateAction } from 'react'
+import React, { FC } from 'react'
 import { toast } from 'sonner'
 
 import { useForm } from 'react-hook-form'
@@ -20,26 +20,10 @@ import {
   InputLabel
 } from '@mui/material'
 
-import { ICategory, ISubcategory } from '@/interfaces/categories'
 import { createBill } from '../configs/dialogComponentConfig'
+import { FormDataDialog, propsDialog } from '@/interfaces/bill'
 
-interface FormData {
-  category: string
-  subCategory: string
-  subCategoriesList: ISubcategory[] | undefined
-  date: Date | null
-  detail: string
-  amount: string
-}
-
-interface props {
-  showDialog: boolean
-  setShowDialog: Dispatch<SetStateAction<boolean>>
-  categories: ICategory[]
-  reloadFunction: () => Promise<void>
-}
-
-const DialogComponent: FC<props> = ({
+const DialogComponent: FC<propsDialog> = ({
   showDialog,
   setShowDialog,
   categories,
@@ -56,10 +40,10 @@ const DialogComponent: FC<props> = ({
     getValues,
     setValue,
     reset
-  } = useForm<FormData>()
+  } = useForm<FormDataDialog>()
 
-  const handleSave = async (data: FormData) => {
-    const { hasError, message } = await createBill(data)
+  const handleSave = async (data: FormDataDialog) => {
+    const { hasError } = await createBill(data)
 
     if (!hasError) {
       setShowDialog(false)

@@ -58,7 +58,7 @@ const getMonthReport = async (req: NextApiRequest, res: NextApiResponse) => {
   const amounts = responseT.map(res => {
     if (res.length > 0) {
       const sum = res.reduce((acc, curr) => {
-        return acc + Number(curr.amount.replace(',', ''))
+        return acc + Number(curr.amount.replace(/,/g, ''))
       }, 0)
 
       return sum

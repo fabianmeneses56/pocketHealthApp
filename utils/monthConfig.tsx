@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 
 import { pocketApi } from '@/api'
 import { IBill } from '@/interfaces/bill'
-import { TopLevel } from '@/pages'
+import { IPieReport } from '@/interfaces/report'
 
 interface DataMonthState {
   summaryMonth: number
@@ -110,7 +110,7 @@ export const useHandleData = (month: string) => {
     summaryMonth: 0,
     bills: []
   })
-  const [getReportState, setGetReportState] = useState<TopLevel>({
+  const [getReportState, setGetReportState] = useState<IPieReport>({
     amounts: [],
     categories: []
   })

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Head from 'next/head'
 import { NextPage } from 'next'
 import NextLink from 'next/link'
@@ -12,27 +12,11 @@ import {
 } from '@mui/material'
 
 import { monthNames } from '@/utils/months'
-import { pocketApi } from '@/api'
 import Report from '@/components/ui/report'
-
-export interface TopLevel {
-  amounts: number[]
-  categories: string[]
-}
+import { useHome } from '@/components/configs/homeConfig'
 
 const Home: NextPage = () => {
-  const [getReportState, setGetReportState] = useState<TopLevel>({
-    amounts: [],
-    categories: []
-  })
-
-  const getReport = async () => {
-    const { data } = await pocketApi.get('/bills/report')
-    setGetReportState(data)
-  }
-  useEffect(() => {
-    getReport()
-  }, [])
+  const { getReportState } = useHome()
 
   return (
     <>

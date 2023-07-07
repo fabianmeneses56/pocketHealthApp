@@ -17,10 +17,6 @@ interface Props {
   categories: ICategory[]
 }
 
-export interface reqa {
-  month: string
-}
-
 const MonthView: NextPage<Props> = ({ month, categories }) => {
   const [showDialog, setShowDialog] = useState(false)
 

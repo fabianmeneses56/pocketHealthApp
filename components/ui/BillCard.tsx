@@ -9,12 +9,8 @@ import {
 import dayjs from 'dayjs'
 
 import { handleDeleteCard } from '@/utils/monthConfig'
-import { IBill } from '@/interfaces/bill'
+import { cardProps } from '@/interfaces/bill'
 
-interface cardProps {
-  res: IBill
-  getData: () => Promise<void>
-}
 const BillCard = ({ res, getData }: cardProps) => {
   return (
     <Card
