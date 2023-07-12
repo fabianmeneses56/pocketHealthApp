@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
@@ -110,7 +114,7 @@ a {
   text-decoration: none;
 }
 body {
-  background-color: #2c3639;
+  background-color: #f7f8fd;
 }
 * {
   box-sizing: border-box;
