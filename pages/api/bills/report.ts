@@ -44,6 +44,7 @@ const getGeneralReport = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const getMonthReport = async (req: NextApiRequest, res: NextApiResponse) => {
   const { month } = req.body
+
   await db.connect()
 
   const categories = await Category.find().lean()
@@ -65,7 +66,7 @@ const getMonthReport = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     return 0
   })
-
+  console.log({ amounts, categories: categoriesMap })
   await db.disconnect()
   return res.status(201).json({ amounts, categories: categoriesMap })
 }

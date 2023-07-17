@@ -11,6 +11,7 @@ import { DivButton, DivContainer, Root } from '../../utils/monthStyles'
 import { columns, CustomToolbar, useHandleData } from '../../utils/monthConfig'
 import BillCard from '@/components/ui/BillCard'
 import Report from '@/components/ui/report'
+import DepositDialogComponent from '@/components/ui/DepositDialogComponent'
 
 interface Props {
   month: string
@@ -19,6 +20,7 @@ interface Props {
 
 const MonthView: NextPage<Props> = ({ month, categories }) => {
   const [showDialog, setShowDialog] = useState(false)
+  const [depositDialog, setDepositDialog] = useState(false)
 
   const { dataMonth, getData, getReportState } = useHandleData(month)
 
@@ -38,11 +40,18 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
           categories={categories}
           reloadFunction={getData}
         />
+        <DepositDialogComponent
+          showDialog={depositDialog}
+          setShowDialog={setDepositDialog}
+          // categories={categories}
+          // reloadFunction={getData}
+        />
         <Typography sx={{ fontSize: 17 }} color='#d23838'>
           TOTAL EXPENSES = ${dataMonth?.summaryMonth?.toLocaleString()}
         </Typography>
 
         <DivButton>
+          {/* mobile components */}
           <Button
             variant='contained'
             style={{
@@ -53,6 +62,17 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
             }}
           >
             añadir Gasto
+          </Button>
+          <Button
+            variant='contained'
+            style={{
+              backgroundColor: '#A27B5C'
+            }}
+            onClick={() => {
+              setShowDialog(true)
+            }}
+          >
+            añadir Pago
           </Button>
 
           {rows?.map(res => (
@@ -65,7 +85,7 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
             rows={rows ?? []}
             columns={columns(getData)}
             components={{
-              Toolbar: () => CustomToolbar(setShowDialog)
+              Toolbar: () => CustomToolbar(setShowDialog, setDepositDialog)
             }}
           />
         </Root>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { NextPage } from 'next'
 import NextLink from 'next/link'
@@ -17,9 +17,47 @@ import { BsPlusCircleFill } from 'react-icons/bs'
 import { monthNames } from '@/utils/months'
 import Report from '@/components/ui/report'
 import { useHome } from '@/components/configs/homeConfig'
+import { IPieReport } from '@/interfaces/report'
+import { pocketApi } from '@/api'
+
+interface reqa {
+  month: string
+}
+
+export const useHandleData = (month?: string) => {
+  const [getReportState, setGetReportState] = useState<IPieReport>({
+    amounts: [],
+    categories: []
+  })
+
+  const [getDepositSum, setGetDepositSum] = useState({ totalDeposits: 0 })
+
+  const body: reqa = {
+    month: 'July'
+  }
+
+  const getReport = async () => {
+    const { data } = await pocketApi.post('/bills/report', body)
+    const { data: DepositsData } = await pocketApi.get('/deposits')
+
+    setGetDepositSum(DepositsData.totalDeposits)
+    setGetReportState(data)
+  }
+
+  useEffect(() => {
+    getReport()
+  }, [])
+
+  return { getReportState, getDepositSum }
+}
 
 const Home: NextPage = () => {
-  const { getReportState } = useHome()
+  const { getReportState, getDepositSum } = useHandleData()
+
+  const summaryMonth = getReportState.amounts.reduce(
+    (prev, current) => prev + current,
+    0
+  )
 
   return (
     <>
@@ -71,7 +109,9 @@ const Home: NextPage = () => {
               </div>
               <div>
                 <h1 className='text-base font-normal'>Total de ingresos</h1>
-                <h1 className='text-4xl font-semibold'>$500,000</h1>
+                <h1 className='text-4xl font-semibold'>
+                  ${getDepositSum.toLocaleString()}
+                </h1>
               </div>
             </div>
             <div className='w-full h-full row-span-2 p-6 bg-white border rounded-lg'>
@@ -83,7 +123,9 @@ const Home: NextPage = () => {
               </div>
               <div>
                 <h1 className='text-base font-normal'>Total de gastos</h1>
-                <h1 className='text-4xl font-semibold'>$500,000</h1>
+                <h1 className='text-4xl font-semibold'>
+                  ${summaryMonth.toLocaleString()}
+                </h1>
               </div>
             </div>
             <div className='w-full h-full p-6 flex flex-col bg-white border rounded-lg'>
@@ -105,9 +147,23 @@ const Home: NextPage = () => {
                   <BsPlusCircleFill size='1em' color='#ECA23C' />
                 </div>
               </div>
-              <div className='flex justify-between mt-6'>
-                <h1 className='text-xl font-normal'>mercado</h1>
-                <h1 className='text-xl font-normal'>900.000</h1>
+              <div className='flex justify-between'>
+                <div className='flex justify-between mt-6 flex-col'>
+                  {getReportState.categories.map(category => (
+                    <>
+                      <h1 className='text-xl font-normal'>{category}</h1>
+                    </>
+                  ))}
+                </div>
+                <div className='flex justify-between mt-6 flex-col'>
+                  {getReportState.amounts.map(amount => (
+                    <>
+                      <h1 className='text-xl font-normal'>
+                        {amount.toLocaleString()}
+                      </h1>
+                    </>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

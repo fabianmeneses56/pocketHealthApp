@@ -72,7 +72,8 @@ export const columns = (getData: () => Promise<void>): GridColDef[] => {
 }
 
 export function CustomToolbar(
-  setShowDialog: Dispatch<SetStateAction<boolean>>
+  setShowDialog: Dispatch<SetStateAction<boolean>>,
+  setDepositDialog: Dispatch<SetStateAction<boolean>>
 ) {
   return (
     <GridToolbarContainer>
@@ -87,6 +88,17 @@ export function CustomToolbar(
         }}
       >
         añadir Gasto
+      </Button>
+      <Button
+        variant='contained'
+        style={{
+          backgroundColor: '#A27B5C'
+        }}
+        onClick={() => {
+          setDepositDialog(true)
+        }}
+      >
+        añadir Pago
       </Button>
     </GridToolbarContainer>
   )
