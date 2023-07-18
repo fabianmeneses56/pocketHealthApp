@@ -80,7 +80,7 @@ const Home: NextPage = () => {
                   <div className='border rounded-lg p-1 flex items-center'>
                     <HiCreditCard size='1em' color='#ecb651' />
                   </div>
-                  <h1 className='text-2xl font-normal text-black'>
+                  <h1 className='text-2xl font-normal text-black no-underline'>
                     Presupuesto
                   </h1>
                 </div>
@@ -92,7 +92,9 @@ const Home: NextPage = () => {
                   <div className='border rounded-lg p-1 flex items-center'>
                     <HiCreditCard size='1em' color='#ecb651' />
                   </div>
-                  <h1 className='text-2xl font-normal text-black'>Deudas</h1>
+                  <h1 className='text-2xl font-normal text-black no-underline'>
+                    Deudas
+                  </h1>
                 </div>
               </Link>
             </NextLink>
@@ -103,7 +105,7 @@ const Home: NextPage = () => {
                   <div className='border rounded-lg p-1 flex items-center'>
                     <HiCreditCard size='1em' color='#ecb651' />
                   </div>
-                  <h1 className='text-2xl font-normal text-black'>
+                  <h1 className='text-2xl font-normal text-black no-underline'>
                     Calendario
                   </h1>
                 </div>
