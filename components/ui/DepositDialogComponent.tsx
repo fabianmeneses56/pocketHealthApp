@@ -17,12 +17,14 @@ import { toast } from 'sonner'
 export interface propsDialog {
   showDialog: boolean
   setShowDialog: Dispatch<SetStateAction<boolean>>
+  month: string
   // categories: ICategory[]
   // reloadFunction: () => Promise<void>
 }
 
 export const createDeposit = async (
-  data: IDeposit
+  data: IDeposit,
+  month: string
 ): Promise<{
   hasError: boolean
   message: string
@@ -33,7 +35,7 @@ export const createDeposit = async (
   }
 
   try {
-    const { data } = await pocketApi.post<IDeposit>('/deposits', body)
+    await pocketApi.post<IDeposit>(`/deposits/${month}`, body)
 
     return {
       hasError: false,
@@ -55,7 +57,8 @@ export const createDeposit = async (
 
 const DepositDialogComponent: FC<propsDialog> = ({
   showDialog,
-  setShowDialog
+  setShowDialog,
+  month
 }) => {
   const {
     register,
@@ -71,7 +74,7 @@ const DepositDialogComponent: FC<propsDialog> = ({
   }
 
   const handleSave = async (data: IDeposit) => {
-    const { hasError } = await createDeposit(data)
+    const { hasError } = await createDeposit(data, month)
     if (!hasError) {
       setShowDialog(false)
       // reloadFunction()

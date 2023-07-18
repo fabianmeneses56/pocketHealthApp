@@ -9,7 +9,7 @@ import { IPieReport } from '@/interfaces/report'
 ChartJS.register(ArcElement, Tooltip, Legend)
 
 export const DivCharts = styled('div')(({ theme }) => ({
-  width: '30%',
+  width: '70%',
   [theme.breakpoints.down('sm')]: {
     width: '100%'
   }
@@ -44,10 +44,11 @@ const Report = ({ dataPie }: { dataPie: IPieReport }) => {
     ]
   }
   return (
-    <div style={{ backgroundColor: 'black', marginTop: 35, padding: 4 }}>
+    <div style={{ marginTop: 10, padding: 4 }}>
       <Typography
-        sx={{ fontSize: 25, textDecoration: 'none', padding: 2 }}
-        color='white'
+        // sx={{ fontSize: 25, textDecoration: 'none', padding: 2 }}
+        // color='black'
+        className='text-2xl font-normal'
       >
         Report
       </Typography>

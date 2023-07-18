@@ -43,7 +43,6 @@ const getBillsByMonth = async (
       0
     )
 
-    // console.log(bills)
     await db.disconnect()
     return res.status(201).json({ bills, summaryMonth })
   } catch (error: any) {

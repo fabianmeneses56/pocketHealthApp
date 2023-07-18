@@ -66,7 +66,7 @@ const getMonthReport = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     return 0
   })
-  console.log({ amounts, categories: categoriesMap })
+
   await db.disconnect()
   return res.status(201).json({ amounts, categories: categoriesMap })
 }

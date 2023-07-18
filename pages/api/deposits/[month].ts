@@ -5,7 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
-      return getAllDeposits(req, res)
+      return getDepositsByMonth(req, res)
     case 'POST':
       return newDeposit(req, res)
 
@@ -17,12 +17,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 const newDeposit = async (req: NextApiRequest, res: NextApiResponse) => {
   const body = req.body
   await db.connect()
-
-  console.log(req.url)
+  const { month } = req.query
 
   try {
     const newDeposit = new Deposit({
-      ...req.body
+      ...req.body,
+      month
     })
 
     await newDeposit.save()
@@ -37,11 +37,16 @@ const newDeposit = async (req: NextApiRequest, res: NextApiResponse) => {
     })
   }
 }
-const getAllDeposits = async (req: NextApiRequest, res: NextApiResponse) => {
+const getDepositsByMonth = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
+  const { month } = req.query
+
   await db.connect()
 
   try {
-    const deposits = await Deposit.find().lean()
+    const deposits = await Deposit.find({ month }).lean()
 
     const depositsValueMap = deposits
       .map(deposit => deposit.amount)
@@ -51,7 +56,7 @@ const getAllDeposits = async (req: NextApiRequest, res: NextApiResponse) => {
 
     await db.disconnect()
 
-    return res.status(201).json({ totalDeposits: depositsValueMap })
+    return res.status(201).json({ totalDeposits: depositsValueMap, deposits })
   } catch (error: any) {
     await db.disconnect()
 

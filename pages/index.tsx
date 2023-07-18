@@ -24,7 +24,7 @@ interface reqa {
   month: string
 }
 
-export const useHandleData = (month?: string) => {
+export const useHandleData = (month: string) => {
   const [getReportState, setGetReportState] = useState<IPieReport>({
     amounts: [],
     categories: []
@@ -33,12 +33,12 @@ export const useHandleData = (month?: string) => {
   const [getDepositSum, setGetDepositSum] = useState({ totalDeposits: 0 })
 
   const body: reqa = {
-    month: 'July'
+    month
   }
 
   const getReport = async () => {
     const { data } = await pocketApi.post('/bills/report', body)
-    const { data: DepositsData } = await pocketApi.get('/deposits')
+    const { data: DepositsData } = await pocketApi.get(`/deposits/${month}`)
 
     setGetDepositSum(DepositsData.totalDeposits)
     setGetReportState(data)
@@ -52,8 +52,9 @@ export const useHandleData = (month?: string) => {
 }
 
 const Home: NextPage = () => {
-  const { getReportState, getDepositSum } = useHandleData()
-
+  const monthName = monthNames[new Date().getMonth()]
+  // const { getReportState, getDepositSum } = useHandleData(monthName)
+  const { getReportState, getDepositSum } = useHome(monthName)
   const summaryMonth = getReportState.amounts.reduce(
     (prev, current) => prev + current,
     0
@@ -73,34 +74,45 @@ const Home: NextPage = () => {
             <h1 className='text-xl font-semibold '>🪙Pocket Health App</h1>
           </header>
           <div className='mt-10'>
-            <div className='flex gap-3 items-center my-4'>
-              <div className='border rounded-lg p-1'>
-                <HiDocument size='1em' color='#ecb651' />
-              </div>
-              <h1 className='text-2xl font-normal '>Presupuesto</h1>
-            </div>
-            <div className='flex gap-3 my-4'>
-              <div className='border rounded-lg p-1 flex items-center'>
-                <HiCreditCard size='1em' color='#ecb651' />
-              </div>
-              <h1 className='text-2xl font-normal '>Deudas</h1>
-            </div>
-            <div className='flex gap-3 my-4'>
-              <div className='border rounded-lg p-1 flex items-center'>
-                <FaPiggyBank size='1em' color='#ecb651' />
-              </div>
-              <h1 className='text-2xl font-normal '>Ahorro</h1>
-            </div>
-            <div className='flex gap-3 my-4'>
-              <div className='border rounded-lg p-1 flex items-center'>
-                <HiCalendar size='1em' color='#ecb651' />
-              </div>
-              <h1 className='text-2xl font-normal '>Calendario</h1>
-            </div>
+            <NextLink legacyBehavior href={`/`}>
+              <Link className='cursor-pointer no-underline'>
+                <div className='flex gap-3 my-4'>
+                  <div className='border rounded-lg p-1 flex items-center'>
+                    <HiCreditCard size='1em' color='#ecb651' />
+                  </div>
+                  <h1 className='text-2xl font-normal text-black'>
+                    Presupuesto
+                  </h1>
+                </div>
+              </Link>
+            </NextLink>
+            <NextLink legacyBehavior href={`/`}>
+              <Link className='cursor-pointer no-underline'>
+                <div className='flex gap-3 my-4'>
+                  <div className='border rounded-lg p-1 flex items-center'>
+                    <HiCreditCard size='1em' color='#ecb651' />
+                  </div>
+                  <h1 className='text-2xl font-normal text-black'>Deudas</h1>
+                </div>
+              </Link>
+            </NextLink>
+
+            <NextLink legacyBehavior href={`/months/${monthName}`}>
+              <Link className='cursor-pointer no-underline'>
+                <div className='flex gap-3 my-4'>
+                  <div className='border rounded-lg p-1 flex items-center'>
+                    <HiCreditCard size='1em' color='#ecb651' />
+                  </div>
+                  <h1 className='text-2xl font-normal text-black'>
+                    Calendario
+                  </h1>
+                </div>
+              </Link>
+            </NextLink>
           </div>
         </section>
         <section className='w-screen p-8'>
-          <h1 className='text-3xl font-bold '>Presupuesto</h1>
+          <h1 className='text-3xl font-bold '>Presupuesto - {monthName}</h1>
 
           <div className='mt-10 grid grid-cols-2 gap-4 grid-rows-3'>
             <div className='w-full h-36 bg-white flex items-center p-6 gap-6 border  rounded-lg border-t-4  border-t-[#52B481]'>
@@ -115,8 +127,9 @@ const Home: NextPage = () => {
               </div>
             </div>
             <div className='w-full h-full row-span-2 p-6 bg-white border rounded-lg'>
-              <h1 className='text-3xl font-normal '>grafica</h1>
+              <Report dataPie={getReportState} />
             </div>
+
             <div className='w-full h-36 flex items-center p-6 gap-6 bg-white border rounded-lg border-t-4  border-t-[#C956E7]'>
               <div className='p-3 bg-[#F6E9FD] rounded-lg'>
                 <FaTicketAlt size='1.5em' color='#C956E7' />

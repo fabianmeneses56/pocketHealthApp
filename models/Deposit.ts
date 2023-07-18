@@ -10,7 +10,8 @@ interface IDepositId extends IDeposit {
 }
 const depositSchema = new Schema({
   detail: { type: String, required: false },
-  amount: { type: Number, required: true }
+  amount: { type: Number, required: true },
+  month: { type: String, required: true }
 })
 
 const Deposit: Model<IDepositId> =

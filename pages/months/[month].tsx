@@ -43,6 +43,7 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
         <DepositDialogComponent
           showDialog={depositDialog}
           setShowDialog={setDepositDialog}
+          month={month}
           // categories={categories}
           // reloadFunction={getData}
         />
@@ -90,7 +91,7 @@ const MonthView: NextPage<Props> = ({ month, categories }) => {
           />
         </Root>
       </DivContainer>
-      <Report dataPie={getReportState} />
+      {/* <Report dataPie={getReportState} /> */}
     </div>
   )
 }
